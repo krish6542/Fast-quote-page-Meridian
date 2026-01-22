@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+    --font-sans: "Inter", "sans-serif";
+    --color-navy-700: #334155;
+    --color-navy-800: #1e293b;
+    --color-navy-900: #0f172a;
+    --color-navy-950: #020617;
+    --color-electric: #3b82f6;
+    --color-coral: #ff7f70;
+
+    --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+    --shadow-xl-glow: 0 20px 25px -5px rgba(59, 130, 246, 0.25), 0 8px 10px -6px rgba(59, 130, 246, 0.1);
+
+    --max-width-8xl: 88rem;
+}
+
+@layer base {
+    html {
+        font-size: 12px;
+    }
+
+    body {
+        @apply bg-slate-50 text-navy-900 antialiased selection:bg-coral/30;
+    }
+}
+
+@layer components {
+    .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+
+    .step-indicator {
+        @apply flex items-center justify-center rounded-full font-extrabold text-xl transition-all duration-300 shrink-0;
+        width: 3rem;
+        height: 3rem;
+        background: white;
+        border: 3px solid #e2e8f0;
+        color: #94a3b8;
+    }
+
+    .step-active .step-indicator {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .form-input-large {
+        @apply w-full bg-white border-2 border-slate-200 rounded-xl px-5 py-4 text-base font-bold text-navy-900 transition-all focus:border-electric focus:ring-4 focus:ring-electric/10 outline-none placeholder:text-slate-400;
+    }
+
+    .cargo-card {
+        @apply relative flex flex-col items-center p-6 rounded-3xl border-4 border-transparent bg-white shadow-sm transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1;
+    }
+
+    .cargo-card-active {
+        @apply border-electric bg-blue-50/50 shadow-lg;
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-black {
+    letter-spacing: -0.03em;
+}
