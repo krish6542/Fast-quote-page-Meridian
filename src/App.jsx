@@ -24,14 +24,16 @@ function App() {
     origin: { country: '', city: '', postalCode: '' },
     destination: { country: '', city: '', postalCode: '' },
     service: 'Air Freight',
-    packages: [{ weight: 0, length: 0, width: 0, height: 0 }],
+    packages: [{ weight: 0, length: 0, width: 0, height: 0, quantity: 1 }],
     cargoType: 'General'
   });
+
+  const [errors, setErrors] = useState({});
 
   const addPackage = () => {
     setFormData(prev => ({
       ...prev,
-      packages: [...prev.packages, { weight: 0, length: 0, width: 0, height: 0 }]
+      packages: [...prev.packages, { weight: 0, length: 0, width: 0, height: 0, quantity: 1 }]
     }));
   };
 
@@ -65,6 +67,36 @@ function App() {
 
       return newState;
     });
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.origin.country) newErrors.originCountry = 'Origin country is required';
+    if (!formData.origin.city) newErrors.originCity = 'Origin city is required';
+    if (!formData.origin.postalCode) newErrors.originPostal = 'Origin postal code is required';
+
+    if (!formData.destination.country) newErrors.destinationCountry = 'Destination country is required';
+    if (!formData.destination.city) newErrors.destinationCity = 'Destination city is required';
+    if (!formData.destination.postalCode) newErrors.destinationPostal = 'Destination postal code is required';
+
+    formData.packages.forEach((pkg, index) => {
+      if (!pkg.weight || pkg.weight <= 0) newErrors[`package${index}Weight`] = `Package ${index + 1} weight is required`;
+      if (!pkg.length || pkg.length <= 0) newErrors[`package${index}Length`] = `Package ${index + 1} length is required`;
+      if (!pkg.width || pkg.width <= 0) newErrors[`package${index}Width`] = `Package ${index + 1} width is required`;
+      if (!pkg.height || pkg.height <= 0) newErrors[`package${index}Height`] = `Package ${index + 1} height is required`;
+      if (!pkg.quantity || pkg.quantity <= 0) newErrors[`package${index}Quantity`] = `Package ${index + 1} quantity is required`;
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleGetQuote = () => {
+    if (validateForm()) {
+      alert('Form is valid! Quote calculation would happen here.');
+      // Here you could send data to backend or calculate quote
+    }
   };
 
   return (
@@ -102,7 +134,7 @@ function App() {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="space-y-3">
-                        <label className="block text-sm font-extrabold text-slate-600 uppercase tracking-wide ml-1">Country</label>
+                        <label className="block text-sm font-extrabold text-slate-600 uppercase tracking-wide ml-1">Country <span className="text-red-500">*</span></label>
                         <div className="relative">
                           <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">public</span>
                           <select
@@ -118,9 +150,10 @@ function App() {
                           </select>
                           <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
                         </div>
+                        {errors.originCountry && <p className="text-red-500 text-xs mt-1">{errors.originCountry}</p>}
                       </div>
                       <div className="space-y-3">
-                        <label className="block text-sm font-extrabold text-slate-600 uppercase tracking-wide ml-1">City</label>
+                        <label className="block text-sm font-extrabold text-slate-600 uppercase tracking-wide ml-1">City <span className="text-red-500">*</span></label>
                         <div className="relative">
                           <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">location_city</span>
                           <select
@@ -135,9 +168,10 @@ function App() {
                           </select>
                           <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
                         </div>
+                        {errors.originCity && <p className="text-red-500 text-xs mt-1">{errors.originCity}</p>}
                       </div>
                       <div className="space-y-3">
-                        <label className="block text-sm font-extrabold text-slate-600 uppercase tracking-wide ml-1">Postal Code</label>
+                        <label className="block text-sm font-extrabold text-slate-600 uppercase tracking-wide ml-1">Postal Code <span className="text-red-500">*</span></label>
                         <div className="relative">
                           <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">pin_drop</span>
                           <input
@@ -148,6 +182,7 @@ function App() {
                             onChange={(e) => updateFormData('origin', { ...formData.origin, postalCode: e.target.value })}
                           />
                         </div>
+                        {errors.originPostal && <p className="text-red-500 text-xs mt-1">{errors.originPostal}</p>}
                       </div>
                     </div>
                   </div>
@@ -160,7 +195,7 @@ function App() {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="space-y-3">
-                        <label className="block text-sm font-extrabold text-slate-600 uppercase tracking-wide ml-1">Country</label>
+                        <label className="block text-sm font-extrabold text-slate-600 uppercase tracking-wide ml-1">Country <span className="text-red-500">*</span></label>
                         <div className="relative">
                           <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">public</span>
                           <select
@@ -176,9 +211,10 @@ function App() {
                           </select>
                           <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
                         </div>
+                        {errors.destinationCountry && <p className="text-red-500 text-xs mt-1">{errors.destinationCountry}</p>}
                       </div>
                       <div className="space-y-3">
-                        <label className="block text-sm font-extrabold text-slate-600 uppercase tracking-wide ml-1">City</label>
+                        <label className="block text-sm font-extrabold text-slate-600 uppercase tracking-wide ml-1">City <span className="text-red-500">*</span></label>
                         <div className="relative">
                           <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">location_city</span>
                           <select
@@ -193,9 +229,10 @@ function App() {
                           </select>
                           <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
                         </div>
+                        {errors.destinationCity && <p className="text-red-500 text-xs mt-1">{errors.destinationCity}</p>}
                       </div>
                       <div className="space-y-3">
-                        <label className="block text-sm font-extrabold text-slate-600 uppercase tracking-wide ml-1">Postal Code</label>
+                        <label className="block text-sm font-extrabold text-slate-600 uppercase tracking-wide ml-1">Postal Code <span className="text-red-500">*</span></label>
                         <div className="relative">
                           <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">pin_drop</span>
                           <input
@@ -206,6 +243,7 @@ function App() {
                             onChange={(e) => updateFormData('destination', { ...formData.destination, postalCode: e.target.value })}
                           />
                         </div>
+                        {errors.destinationPostal && <p className="text-red-500 text-xs mt-1">{errors.destinationPostal}</p>}
                       </div>
                     </div>
                   </div>
@@ -213,23 +251,16 @@ function App() {
 
                 <div className="mt-9 border-t border-slate-100 pt-8">
                   <label className="block text-base font-black text-navy-900 mb-5">Preferred Service</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <button
-                      className={`flex items-center gap-4 p-5 rounded-xl border-2 transition-all text-left ${formData.service === 'Air Freight' ? 'border-electric bg-blue-50/50 text-electric font-bold' : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 text-slate-600 font-bold'}`}
-                      type="button"
-                      onClick={() => updateFormData('service', 'Air Freight')}
+                  <div className="relative">
+                    <select
+                      className="form-input-large pl-5 appearance-none cursor-pointer"
+                      value={formData.service}
+                      onChange={(e) => updateFormData('service', e.target.value)}
                     >
-                      <span className="material-symbols-outlined text-3xl">flight_takeoff</span>
-                      <span className="text-lg">Air Freight</span>
-                    </button>
-                    <button
-                      className={`flex items-center gap-4 p-5 rounded-xl border-2 transition-all text-left ${formData.service === 'Road Freight (GCC)' ? 'border-electric bg-blue-50/50 text-electric font-bold' : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 text-slate-600 font-bold'}`}
-                      type="button"
-                      onClick={() => updateFormData('service', 'Road Freight (GCC)')}
-                    >
-                      <span className="material-symbols-outlined text-3xl">local_shipping</span>
-                      <span className="text-lg">Road Freight (GCC)</span>
-                    </button>
+                      <option value="Air Freight">Air Freight</option>
+                      <option value="Road Freight (GCC)">Road Freight (GCC)</option>
+                    </select>
+                    <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
                   </div>
                 </div>
               </div>
@@ -265,9 +296,9 @@ function App() {
                           <span className="material-symbols-outlined text-sm font-bold">close</span>
                         </button>
                       )}
-                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                         <div className="space-y-2.5">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center block">Weight (kg)</label>
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center block">Weight (kg) <span className="text-red-500">*</span></label>
                           <div className="relative">
                             <input
                               className="form-input-large text-center !text-xl !py-3 shadow-sm"
@@ -277,9 +308,10 @@ function App() {
                             />
                             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">kg</span>
                           </div>
+                          {errors[`package${index}Weight`] && <p className="text-red-500 text-xs mt-1">{errors[`package${index}Weight`]}</p>}
                         </div>
                         <div className="space-y-2.5">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center block">Length (cm)</label>
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center block">Length (cm) <span className="text-red-500">*</span></label>
                           <input
                             className="form-input-large text-center !text-xl !py-3 shadow-sm"
                             placeholder="0"
@@ -287,9 +319,10 @@ function App() {
                             value={pkg.length}
                             onChange={(e) => updatePackage(index, 'length', e.target.value)}
                           />
+                          {errors[`package${index}Length`] && <p className="text-red-500 text-xs mt-1">{errors[`package${index}Length`]}</p>}
                         </div>
                         <div className="space-y-2.5">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center block">Width (cm)</label>
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center block">Width (cm) <span className="text-red-500">*</span></label>
                           <input
                             className="form-input-large text-center !text-xl !py-3 shadow-sm"
                             placeholder="0"
@@ -297,9 +330,10 @@ function App() {
                             value={pkg.width}
                             onChange={(e) => updatePackage(index, 'width', e.target.value)}
                           />
+                          {errors[`package${index}Width`] && <p className="text-red-500 text-xs mt-1">{errors[`package${index}Width`]}</p>}
                         </div>
                         <div className="space-y-2.5">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center block">Height (cm)</label>
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center block">Height (cm) <span className="text-red-500">*</span></label>
                           <input
                             className="form-input-large text-center !text-xl !py-3 shadow-sm"
                             placeholder="0"
@@ -307,6 +341,18 @@ function App() {
                             value={pkg.height}
                             onChange={(e) => updatePackage(index, 'height', e.target.value)}
                           />
+                          {errors[`package${index}Height`] && <p className="text-red-500 text-xs mt-1">{errors[`package${index}Height`]}</p>}
+                        </div>
+                        <div className="space-y-2.5">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center block">Quantity <span className="text-red-500">*</span></label>
+                          <input
+                            className="form-input-large text-center !text-xl !py-3 shadow-sm"
+                            placeholder="1"
+                            type="number"
+                            value={pkg.quantity}
+                            onChange={(e) => updatePackage(index, 'quantity', e.target.value)}
+                          />
+                          {errors[`package${index}Quantity`] && <p className="text-red-500 text-xs mt-1">{errors[`package${index}Quantity`]}</p>}
                         </div>
                       </div>
                     </div>
@@ -395,7 +441,7 @@ function App() {
                     </div>
                   </div>
                 </div>
-                <button className="w-full bg-electric hover:bg-blue-600 text-white font-black py-4 px-6 rounded-xl text-xl shadow-xl-glow transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 group">
+                <button className="w-full bg-electric hover:bg-blue-600 text-white font-black py-4 px-6 rounded-xl text-xl shadow-xl-glow transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 group" onClick={handleGetQuote}>
                   GET QUOTE
                   <span className="material-symbols-outlined text-3xl group-hover:translate-x-1.5 transition-transform">arrow_forward_ios</span>
                 </button>
